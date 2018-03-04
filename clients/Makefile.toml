@@ -1,0 +1,12 @@
+extend = "../ekiden/clients/Makefile.toml"
+
+[tasks.build]
+command = "cargo"
+args = ["build"]
+
+[tasks.build-flow]
+dependencies = [
+    "pre-build",
+    "build",
+    "post-build",
+]

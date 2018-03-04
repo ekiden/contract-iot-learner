@@ -1,0 +1,108 @@
+From 110f74949057cb57dda137dfa48286a3b6b51678 Mon Sep 17 00:00:00 2001
+From: Nick Hynes <nhynes@berkeley.edu>
+Date: Sat, 3 Mar 2018 18:11:03 -0800
+Subject: [PATCH] serde rusty-machine and rulinalg
+
+---
+ third_party/rulinalg/Cargo.toml                   | 2 ++
+ third_party/rulinalg/src/lib.rs                   | 3 +++
+ third_party/rulinalg/src/matrix/mod.rs            | 2 +-
+ third_party/rulinalg/src/vector/mod.rs            | 2 +-
+ third_party/rusty-machine/Cargo.toml              | 2 ++
+ third_party/rusty-machine/src/learning/lin_reg.rs | 2 +-
+ third_party/rusty-machine/src/lib.rs              | 3 +++
+ 7 files changed, 13 insertions(+), 3 deletions(-)
+
+diff --git a/third_party/rulinalg/Cargo.toml b/third_party/rulinalg/Cargo.toml
+index f0194db..8b86d22 100644
+--- a/third_party/rulinalg/Cargo.toml
++++ b/third_party/rulinalg/Cargo.toml
+@@ -22,6 +22,8 @@ num = {path = "../num", default-features = false }
+ rustc-serialize = { path = "../rustc-serialize", optional = true }
+ csv = { path = "../rust-csv", optional = true}
+ matrixmultiply = { path = "../matrixmultiply" }
++serde = { git = "https://github.com/ekiden/serde" }
++serde_derive = "1.0.27"
+ 
+ [dev-dependencies]
+ rand = "0.3"
+diff --git a/third_party/rulinalg/src/lib.rs b/third_party/rulinalg/src/lib.rs
+index 556ade0..e8e94f3 100644
+--- a/third_party/rulinalg/src/lib.rs
++++ b/third_party/rulinalg/src/lib.rs
+@@ -94,6 +94,9 @@ extern crate sgx_tstd as std;
+ 
+ extern crate num as libnum;
+ extern crate matrixmultiply;
++#[macro_use]
++extern crate serde_derive;
++extern crate serde;
+ 
+ // macros should be at the top in order for macros to be accessible in subsequent modules
+ #[macro_use]
+diff --git a/third_party/rulinalg/src/matrix/mod.rs b/third_party/rulinalg/src/matrix/mod.rs
+index 8543a40..1a07647 100644
+--- a/third_party/rulinalg/src/matrix/mod.rs
++++ b/third_party/rulinalg/src/matrix/mod.rs
+@@ -42,7 +42,7 @@ pub enum Axes {
+ /// The `Matrix` struct.
+ ///
+ /// Can be instantiated with any type.
+-#[derive(Debug, Clone, PartialEq, Eq, Hash)]
++#[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
+ pub struct Matrix<T> {
+     rows: usize,
+     cols: usize,
+diff --git a/third_party/rulinalg/src/vector/mod.rs b/third_party/rulinalg/src/vector/mod.rs
+index 41aeeba..42f3470 100644
+--- a/third_party/rulinalg/src/vector/mod.rs
++++ b/third_party/rulinalg/src/vector/mod.rs
+@@ -9,7 +9,7 @@ mod impl_vec;
+ /// The Vector struct.
+ ///
+ /// Can be instantiated with any type.
+-#[derive(Debug, PartialEq, Eq, Hash)]
++#[derive(Debug, PartialEq, Eq, Hash, Serialize, Deserialize)]
+ pub struct Vector<T> {
+     size: usize,
+     data: Vec<T>,
+diff --git a/third_party/rusty-machine/Cargo.toml b/third_party/rusty-machine/Cargo.toml
+index f741d0f..bc88217 100644
+--- a/third_party/rusty-machine/Cargo.toml
++++ b/third_party/rusty-machine/Cargo.toml
+@@ -22,3 +22,5 @@ sgx_rand = { path = "../../sgx_rand"}
+ [dependencies]
+ num = { path = "../num" , default-features = false }
+ rulinalg = { path = "../rulinalg" }
++serde = { git = "https://github.com/ekiden/serde" }
++serde_derive = "1.0.27"
+diff --git a/third_party/rusty-machine/src/learning/lin_reg.rs b/third_party/rusty-machine/src/learning/lin_reg.rs
+index 46c8531..b1d95f3 100644
+--- a/third_party/rusty-machine/src/learning/lin_reg.rs
++++ b/third_party/rusty-machine/src/learning/lin_reg.rs
+@@ -42,7 +42,7 @@ use learning::error::Error;
+ /// Linear Regression Model.
+ ///
+ /// Contains option for optimized parameter.
+-#[derive(Debug)]
++#[derive(Debug, Serialize, Deserialize)]
+ pub struct LinRegressor {
+     /// The parameters for the regression model.
+     parameters: Option<Vector<f64>>,
+diff --git a/third_party/rusty-machine/src/lib.rs b/third_party/rusty-machine/src/lib.rs
+index 882fb34..8fc2c2f 100644
+--- a/third_party/rusty-machine/src/lib.rs
++++ b/third_party/rusty-machine/src/lib.rs
+@@ -115,6 +115,9 @@ extern crate sgx_tstd as std;
+ 
+ extern crate rulinalg;
+ extern crate num as libnum;
++#[macro_use]
++extern crate serde_derive;
++extern crate serde;
+ 
+ extern crate sgx_rand as rand;
+ 
+-- 
+2.7.4
+

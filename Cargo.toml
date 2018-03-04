@@ -1,0 +1,23 @@
+[package]
+name = "iot-learner"
+version = "0.1.0"
+authors = ["Nick Hynes <nhynes@berkeley.edu>"]
+build = "build.rs"
+
+[lib]
+crate-type = ["staticlib"]
+
+[dependencies]
+iot-learner-api = { path = "./api" }
+ekiden-core-common = { path = "./ekiden/core/common" }
+ekiden-core-trusted = { path = "./ekiden/core/trusted" }
+ndarray = { git = "https://github.com/ekiden/rust-ndarray", features = ["serde-1"] }
+protobuf = "1.4.3"
+serde = { git = "https://github.com/ekiden/serde" }
+serde_cbor = { git = "https://github.com/ekiden/cbor" }
+serde_derive = "1.0.27"
+rusty-machine = { path = "./ekiden/third_party/rust-sgx-sdk/third_party/rusty-machine" }
+
+[build-dependencies]
+ekiden-tools = { path = "./ekiden/tools" }
+ekiden-core-edl = { path = "./ekiden/core/edl" }
